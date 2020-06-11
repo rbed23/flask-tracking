@@ -14,7 +14,8 @@ tracking = Blueprint("tracking", __name__)
 def index():
     site_form = SiteForm()
     visit_form = VisitForm()
-    current_app.logger.info('welcome home')
+    #current_app.logger.info('welcome home')  
+
     return render_template("index.html",
                            site_form=site_form,
                            visit_form=visit_form)

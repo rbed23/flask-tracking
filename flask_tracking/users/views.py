@@ -16,7 +16,7 @@ def login():
         # has been authenticated and should be
         # associated with the current session.
         login_user(form.user)
-
+        print('logged in')
         flash("Logged in successfully.")
         current_app.logger.info('user logged in')
         return redirect(request.args.get("next") or url_for("tracking.index"))

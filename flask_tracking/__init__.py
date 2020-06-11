@@ -1,5 +1,4 @@
-import logging
-from logging import NullHandler
+from logging import getLogger, NullHandler, CRITICAL
 
 from flask import Flask, render_template, request
 from flask.logging import default_handler
@@ -7,27 +6,26 @@ from flask.logging import default_handler
 from .auth import login_manager
 from .data import db
 import flask_tracking.errors as errors
-import flask_tracking.logging as logging
+import flask_tracking.logger as logger
 from .tracking.views import tracking
 from .users.views import users
 
+#print(log)
 
-log = logging.getLogger('werkzeug')
-log.disabled = True
-logging.getLogger(__name__).addHandler(NullHandler())
+getLogger('werkzeug').disabled = True
+getLogger(__name__).addHandler(NullHandler())
 
 app = Flask(__name__)
-
-#app.config.from_object('config.BaseConfiguration')
-app.config.from_object('config.DebugConfiguration')
-#app.logger.removeHandler(default_handler)
-
+#app.config.from_object('config.DevelopmentConfiguration')
+app.config.from_object('config.ProductionConfiguration')
 
 db.init_app(app)
 login_manager.init_app(app)
 errors.init_app(app)
-logging.init_app(app)
 
+logger.init_app(app, app.logger.level) if\
+    app.logger.level != 0 else\
+    logger.init_app(app, app.logger.parent.level)
 
 app.register_blueprint(tracking)
 app.register_blueprint(users)
@@ -35,7 +33,7 @@ app.register_blueprint(users)
 
 @app.before_request
 def log_it():
-    app.logger.debug("Handling Request")
+    app.logger.info("Handling Request")
 
 
 @app.context_processor

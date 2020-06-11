@@ -3,7 +3,8 @@ from werkzeug.exceptions import default_exceptions, HTTPException
 
 
 def error_handler(error):
-     current_app.logger.warning(f"Request resulted in {error}", exc_info=True)
+    current_app.logger.warning(
+        f"Request resulted in {error}", exc_info=True)
 
     if isinstance(error, HTTPException):
         description = error.get_description(request.environ)
@@ -15,11 +16,8 @@ def error_handler(error):
         code = 500
         name = 'Internal Server Error'
 
-    # Flask supports looking up multiple templates and rendering the first
-    # one it finds.  This will let us create specific error pages
-    # for errors where we can provide the user some additional help.
-    # (Like a 404, for example).
-    templates_to_try = ['errors/{}.html'.format(code), 'errors/generic.html']
+    templates_to_try = ['errors/{}.html'.format(code),
+                        'errors/generic.html']
     return render_template(templates_to_try,
                            code=code,
                            name=Markup(name),
